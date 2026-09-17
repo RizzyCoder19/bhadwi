@@ -27,7 +27,9 @@ const STATES = {
     FORM_I: 1,
     FORM_LOVE: 2,
     FORM_YOU: 3,
-    FINALE: 4
+    FINALE: 4,
+    PHOTOS: 5,
+    LETTER: 6
 };
 
 const QUOTES = {
@@ -37,6 +39,23 @@ const QUOTES = {
     [STATES.FORM_YOU]: "My heart beats only for you... to kabhi marna mat warna bc mai bhi mar jaauga 💕",
     [STATES.FINALE]: "You are my today and all of my tomorrows baby ❤️ Forever & Always ✨"
 };
+
+// --- Photos for Cinematic Slideshow ---
+const PHOTOS_DATA = [
+    { src: '170025.jpg', caption: 'The prettiest smile in the entire universe ✨' },
+    { src: 'IMG_20260801_122902_015.jpg', caption: 'Every little moment with you feels like pure magic ❤️' },
+    { src: '172059.jpg', caption: 'My peace, my sunshine, my sweetest dream 🌸' },
+    { src: 'IMG_20260814_135356_665.jpg', caption: 'Can never stop looking at you, my prettiest queen 👑' },
+    { src: 'Screenshot_20260727_075100_Gallery.jpg', caption: 'Tere bina har ek lamha adhoora sa lagda hai 💕' },
+    { src: 'Screenshot_20260826_011700_Instagram.jpg', caption: 'You make this entire world so magical and bright ✨' },
+    { src: 'Screenshot_20260828_154322_Instagram.jpg', caption: 'Forever & always holding your hand, meri jaan ❤️' }
+];
+
+// Preload images for instant buttery-smooth transitions
+PHOTOS_DATA.forEach(item => {
+    const img = new Image();
+    img.src = item.src;
+});
 
 let currentState = STATES.IDLE;
 let stateStartTime = 0;
@@ -57,7 +76,7 @@ function resize() {
     canvas.height = Math.floor(height * dpr);
     ctx.resetTransform?.();
     ctx.scale(dpr, dpr);
-    if (currentState >= STATES.FORM_I) {
+    if (currentState >= STATES.FORM_I && currentState <= STATES.FINALE) {
         buildTargetPointsForState(currentState);
     }
 }
@@ -139,20 +158,19 @@ function getGlowSprite(color, radius) {
     return glowSprites[key];
 }
 
-// --- Web Audio Romantic Synthesizer & Interactive Harp ---
+// --- Romantic Audio: Song Playback + Interactive Harp SFX ---
 class RomanticAudio {
     constructor() {
         this.ctx = null;
         this.isPlaying = false;
-        this.timer = null;
-        this.chordIndex = 0;
-        this.chords = [
-            [155.56, 196.00, 233.08, 311.13, 466.16], // Ebmaj9
-            [130.81, 196.00, 233.08, 261.63, 392.00], // Cm9
-            [103.83, 155.56, 207.65, 261.63, 311.13], // Abmaj7
-            [116.54, 174.61, 233.08, 293.66, 349.23]  // Bbadd9
-        ];
         this.harpScale = [311.13, 349.23, 392.00, 466.16, 523.25, 622.25, 698.46, 783.99, 932.33];
+
+        // Main song — the .m4a file in the project folder
+        this.song = new Audio('Video Project 1.m4a');
+        this.song.loop = true;
+        this.song.volume = 1.0;
+        this.song.preload = 'auto';
+        this.song.load();
     }
 
     init() {
@@ -169,12 +187,12 @@ class RomanticAudio {
         this.init();
         if (this.isPlaying) return;
         this.isPlaying = true;
-        this.playChordCycle();
+        this.song.play().catch(() => {});
     }
 
     stop() {
         this.isPlaying = false;
-        if (this.timer) clearTimeout(this.timer);
+        this.song.pause();
     }
 
     playTone(freq, duration, type = 'sine', gainVal = 0.05, attack = 0.4, release = 1.8) {
@@ -215,28 +233,6 @@ class RomanticAudio {
         const safeIdx = Math.max(0, Math.min(this.harpScale.length - 1, noteIdx));
         const freq = this.harpScale[safeIdx];
         this.playChime(freq, 0.11);
-    }
-
-    playChordCycle() {
-        if (!this.isPlaying) return;
-        const chord = this.chords[this.chordIndex % this.chords.length];
-        this.chordIndex++;
-
-        chord.forEach((freq, idx) => {
-            this.playTone(freq, 3.2, 'sine', 0.035, 0.8 + idx * 0.1, 2.4);
-        });
-
-        for (let i = 0; i < 3; i++) {
-            setTimeout(() => {
-                if (!this.isPlaying) return;
-                const randomNote = this.harpScale[Math.floor(Math.random() * this.harpScale.length)];
-                this.playTone(randomNote, 0.45, 'sine', 0.045, 0.04, 1.4);
-            }, (i + 1) * 850 + Math.random() * 100);
-        }
-
-        this.timer = setTimeout(() => {
-            this.playChordCycle();
-        }, 3400);
     }
 
     playTransitionChime() {
@@ -1083,8 +1079,12 @@ function switchState(newState) {
     updateQuoteForState(newState);
 
     if (newState === STATES.RAIN) {
+        hidePhotoShowcase();
+        hideRoyalLetter();
         rainDrops.forEach(d => d.reset(true));
-    } else if (newState >= STATES.FORM_I) {
+    } else if (newState >= STATES.FORM_I && newState <= STATES.FINALE) {
+        hidePhotoShowcase();
+        hideRoyalLetter();
         if (newState === STATES.FORM_I) {
             floatingPetals.forEach(p => p.reset());
         }
@@ -1092,6 +1092,12 @@ function switchState(newState) {
         shockwaveRing.trigger(width / 2, height / 2);
         spawnHeartFirework(width / 2, height / 2, 28);
         audioManager.playTransitionChime();
+    } else if (newState === STATES.PHOTOS) {
+        hideRoyalLetter();
+        showPhotoShowcase();
+    } else if (newState === STATES.LETTER) {
+        hidePhotoShowcase();
+        showRoyalLetter();
     }
 }
 
@@ -1203,6 +1209,12 @@ function animate(now) {
         const timeInSubPhase = now - subPhaseStartTime;
         if (stateSubPhase === 'assembling' && timeInSubPhase > CONFIG.assemblyDuration) {
             stateSubPhase = 'holding';
+            subPhaseStartTime = now;
+        } else if (stateSubPhase === 'holding') {
+            // Heart beats for 3.8 seconds, then transitions into dramatic photo slideshow
+            if (now - subPhaseStartTime > 3800) {
+                switchState(STATES.PHOTOS);
+            }
         }
 
         // Draw Breathtaking Cinematic Typography & 3D Beating Crystal Heart (Clean & Unobstructed)
@@ -1222,6 +1234,222 @@ function animate(now) {
             ambientHearts[i].draw(ctx);
         }
     }
+    // 4. Photo Showcase & Royal Letter Scenes (Ambient Canvas Backdrop)
+    else if (currentState === STATES.PHOTOS || currentState === STATES.LETTER) {
+        for (let i = 0; i < ambientHearts.length; i++) {
+            ambientHearts[i].update(now);
+            ambientHearts[i].draw(ctx);
+        }
+    }
+}
+
+// ==========================================================
+// PHOTO SHOWCASE & ROYAL LETTER CONTROLLERS
+// ==========================================================
+const photoShowcase = document.getElementById('photoShowcase');
+const stageBackdrop = document.getElementById('stageBackdrop');
+const photoImage = document.getElementById('photoImage');
+const photoCaption = document.getElementById('photoCaption');
+const photoDots = document.getElementById('photoDots');
+const btnPrevPhoto = document.getElementById('btnPrevPhoto');
+const btnNextPhoto = document.getElementById('btnNextPhoto');
+const btnSkipToLetter = document.getElementById('btnSkipToLetter');
+
+const royalLetterStage = document.getElementById('royalLetterStage');
+const waxEnvelope = document.getElementById('waxEnvelope');
+const waxSeal = document.getElementById('waxSeal');
+const royalLetterCard = document.getElementById('royalLetterCard');
+const btnLetterReplay = document.getElementById('btnLetterReplay');
+const btnLetterPhotos = document.getElementById('btnLetterPhotos');
+
+let currentPhotoIndex = 0;
+let photoSlideTimer = null;
+const PHOTO_DURATION = 3800; // ms per photo
+
+function initPhotoDots() {
+    if (!photoDots) return;
+    photoDots.innerHTML = '';
+    PHOTOS_DATA.forEach((_, idx) => {
+        const dot = document.createElement('div');
+        dot.className = `photo-dot ${idx === 0 ? 'active' : ''}`;
+        dot.addEventListener('click', (e) => {
+            e.stopPropagation();
+            goToPhoto(idx);
+        });
+        photoDots.appendChild(dot);
+    });
+}
+
+function updatePhotoDots(activeIndex) {
+    if (!photoDots) return;
+    const dots = photoDots.querySelectorAll('.photo-dot');
+    dots.forEach((dot, idx) => {
+        if (idx === activeIndex) {
+            dot.classList.add('active');
+        } else {
+            dot.classList.remove('active');
+        }
+    });
+}
+
+function showPhoto(index) {
+    if (!photoImage || !photoCaption) return;
+    const data = PHOTOS_DATA[index];
+    if (!data) return;
+
+    photoImage.classList.add('crossfade');
+    photoCaption.classList.add('fade');
+
+    setTimeout(() => {
+        photoImage.src = data.src;
+        if (stageBackdrop) {
+            stageBackdrop.style.backgroundImage = `url("${data.src}")`;
+        }
+        photoCaption.textContent = data.caption;
+        updatePhotoDots(index);
+
+        photoImage.classList.remove('crossfade');
+        photoCaption.classList.remove('fade');
+
+        // Reset Ken Burns zoom animation
+        photoImage.classList.remove('ken-burns');
+        void photoImage.offsetWidth;
+        photoImage.classList.add('ken-burns');
+    }, 380);
+}
+
+function goToPhoto(index) {
+    clearTimeout(photoSlideTimer);
+    currentPhotoIndex = index;
+    showPhoto(currentPhotoIndex);
+    scheduleNextSlide();
+}
+
+function scheduleNextSlide() {
+    clearTimeout(photoSlideTimer);
+    photoSlideTimer = setTimeout(() => {
+        if (currentState !== STATES.PHOTOS) return;
+        if (currentPhotoIndex < PHOTOS_DATA.length - 1) {
+            currentPhotoIndex++;
+            showPhoto(currentPhotoIndex);
+            scheduleNextSlide();
+        } else {
+            // Photos finished! Smoothly transition into Royal Love Letter
+            switchState(STATES.LETTER);
+        }
+    }, PHOTO_DURATION);
+}
+
+function showPhotoShowcase() {
+    if (!photoShowcase) return;
+    initPhotoDots();
+    currentPhotoIndex = 0;
+    photoShowcase.classList.remove('hidden');
+    showPhoto(0);
+    scheduleNextSlide();
+
+    spawnHeartFirework(width / 2, height / 2, 28);
+    audioManager.playTransitionChime();
+}
+
+function hidePhotoShowcase() {
+    clearTimeout(photoSlideTimer);
+    if (photoShowcase) {
+        photoShowcase.classList.add('hidden');
+    }
+}
+
+// Royal Letter Logic
+let envelopeAutoOpenTimer = null;
+
+function showRoyalLetter() {
+    if (!royalLetterStage) return;
+    royalLetterStage.classList.remove('hidden');
+
+    // Show wax envelope first
+    if (waxEnvelope) waxEnvelope.classList.remove('hidden');
+    if (royalLetterCard) royalLetterCard.classList.add('hidden');
+
+    spawnHeartFirework(width / 2, height * 0.45, 30);
+    audioManager.playTransitionChime();
+
+    // Auto-open after 2.4s or instantly when tapped
+    clearTimeout(envelopeAutoOpenTimer);
+    envelopeAutoOpenTimer = setTimeout(() => {
+        openRoyalLetter();
+    }, 2400);
+}
+
+function openRoyalLetter() {
+    clearTimeout(envelopeAutoOpenTimer);
+    if (!waxEnvelope || !royalLetterCard) return;
+
+    // Burst fireworks & sound
+    spawnHeartFirework(width / 2, height / 2, 35);
+    audioManager.playInteractiveHarp(0.25);
+    setTimeout(() => {
+        audioManager.playTransitionChime();
+    }, 200);
+
+    waxEnvelope.classList.add('hidden');
+    royalLetterCard.classList.remove('hidden');
+}
+
+function hideRoyalLetter() {
+    clearTimeout(envelopeAutoOpenTimer);
+    if (royalLetterStage) {
+        royalLetterStage.classList.add('hidden');
+    }
+    if (waxEnvelope) waxEnvelope.classList.remove('hidden');
+    if (royalLetterCard) royalLetterCard.classList.add('hidden');
+}
+
+// Event Listeners for Photo Showcase & Royal Letter
+if (btnPrevPhoto) {
+    btnPrevPhoto.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const prevIdx = (currentPhotoIndex - 1 + PHOTOS_DATA.length) % PHOTOS_DATA.length;
+        goToPhoto(prevIdx);
+    });
+}
+
+if (btnNextPhoto) {
+    btnNextPhoto.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (currentPhotoIndex < PHOTOS_DATA.length - 1) {
+            goToPhoto(currentPhotoIndex + 1);
+        } else {
+            switchState(STATES.LETTER);
+        }
+    });
+}
+
+if (btnSkipToLetter) {
+    btnSkipToLetter.addEventListener('click', (e) => {
+        e.stopPropagation();
+        switchState(STATES.LETTER);
+    });
+}
+
+if (waxEnvelope) {
+    waxEnvelope.addEventListener('click', (e) => {
+        e.stopPropagation();
+        openRoyalLetter();
+    });
+}
+
+if (btnLetterReplay) {
+    btnLetterReplay.addEventListener('click', (e) => {
+        e.stopPropagation();
+        switchState(STATES.RAIN);
+    });
+}
+
+if (btnLetterPhotos) {
+    btnLetterPhotos.addEventListener('click', (e) => {
+        e.stopPropagation();
+        switchState(STATES.PHOTOS);
+    });
 }
 
 // --- UI Interaction & Pure Canvas Touch FX ---
@@ -1233,7 +1461,20 @@ const tapHint = document.getElementById('tapHint');
 
 function startExperience() {
     startOverlay.classList.add('hidden');
-    audioManager.start();
+
+    // Guarantee audio starts on first user gesture (critical for mobile)
+    audioManager.init();
+    audioManager.isPlaying = true;
+    const playPromise = audioManager.song.play();
+    if (playPromise !== undefined) {
+        playPromise.catch(() => {
+            // Retry once after a short delay (some browsers need this)
+            setTimeout(() => {
+                audioManager.song.play().catch(() => {});
+            }, 100);
+        });
+    }
+
     switchState(STATES.RAIN);
 
     setTimeout(() => {
@@ -1252,7 +1493,7 @@ if (btnMusic) {
             audioManager.stop();
             btnMusic.innerHTML = '<span class="icon">🔇</span>';
         } else {
-            audioManager.start();
+            audioManager.start();  // Resumes from where it paused
             btnMusic.innerHTML = '<span class="icon">🎵</span>';
         }
     });
@@ -1296,20 +1537,20 @@ function handleInteractiveTouch(x, y) {
 
 let lastDragTime = 0;
 window.addEventListener('click', (e) => {
-    if (e.target.closest('.top-controls') || e.target.closest('.overlay')) return;
+    if (e.target.closest('.top-controls') || e.target.closest('.overlay') || e.target.closest('.photo-container') || e.target.closest('.royal-letter-card') || e.target.closest('.wax-envelope')) return;
     handleInteractiveTouch(e.clientX, e.clientY);
 });
 
 window.addEventListener('mousemove', (e) => {
     const now = performance.now();
-    if (now - lastDragTime > 60 && currentState >= STATES.FORM_I) {
+    if (now - lastDragTime > 60 && currentState >= STATES.FORM_I && currentState <= STATES.FINALE) {
         spawnHeartFirework(e.clientX, e.clientY, 3);
         lastDragTime = now;
     }
 });
 
 window.addEventListener('touchstart', (e) => {
-    if (e.target.closest('.top-controls') || e.target.closest('.overlay')) return;
+    if (e.target.closest('.top-controls') || e.target.closest('.overlay') || e.target.closest('.photo-container') || e.target.closest('.royal-letter-card') || e.target.closest('.wax-envelope')) return;
     if (e.touches.length > 0) {
         const touch = e.touches[0];
         handleInteractiveTouch(touch.clientX, touch.clientY);
@@ -1318,7 +1559,7 @@ window.addEventListener('touchstart', (e) => {
 
 window.addEventListener('touchmove', (e) => {
     const now = performance.now();
-    if (now - lastDragTime > 60 && e.touches.length > 0 && currentState >= STATES.FORM_I) {
+    if (now - lastDragTime > 60 && e.touches.length > 0 && currentState >= STATES.FORM_I && currentState <= STATES.FINALE) {
         spawnHeartFirework(e.touches[0].clientX, e.touches[0].clientY, 3);
         lastDragTime = now;
     }

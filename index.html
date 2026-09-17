@@ -44,9 +44,120 @@
             <div class="heart-pulse-icon">❤️</div>
             <h1 class="overlay-title">For You</h1>
             <div class="glow-pill">
-                <span>Touch anywhere to begin chhakki! ✨</span>
+                <span>Touch anywhere to begin! ✨</span>
             </div>
             <p class="audio-hint">Turn up your volume for the best experience 🎧</p>
+        </div>
+    </div>
+
+    <!-- Cinematic Photo Showcase Stage -->
+    <div id="photoShowcase" class="photo-stage hidden">
+        <div class="photo-stage-backdrop" id="stageBackdrop"></div>
+        <div class="photo-container">
+            <div class="photo-header">
+                <span class="photo-badge">✨ Meri Sabse Pyaari Tanvi ✨</span>
+                <div class="photo-counter">
+                    <span id="photoCurrentIndex">01</span><span class="counter-sep">/</span><span id="photoTotalCount">07</span>
+                </div>
+            </div>
+            <div class="photo-frame" id="photoFrame">
+                <!-- Auto-progress Story Bar -->
+                <div class="photo-progress-track">
+                    <div id="photoProgressBar" class="photo-progress-fill"></div>
+                </div>
+                <div id="photoFrameAura" class="photo-frame-aura"></div>
+                <img id="photoImage" class="photo-img" src="170025.jpg" alt="My Love">
+                <div class="photo-glow-border"></div>
+                <!-- Luxury Corner Filigrees -->
+                <span class="frame-corner top-left"></span>
+                <span class="frame-corner top-right"></span>
+                <span class="frame-corner bottom-left"></span>
+                <span class="frame-corner bottom-right"></span>
+            </div>
+            <div class="photo-caption-box">
+                <span class="caption-quote-mark">❝</span>
+                <p id="photoCaption" class="photo-caption">The prettiest smile in the entire universe ✨</p>
+                <span class="caption-quote-mark">❞</span>
+            </div>
+            <!-- Progress dots & navigation -->
+            <div class="photo-controls">
+                <button id="btnPrevPhoto" class="photo-nav-btn" aria-label="Previous Photo" title="Previous Photo">❮</button>
+                <button id="btnPlayPausePhoto" class="photo-nav-btn play-pause-btn" aria-label="Pause/Play" title="Pause / Play Slideshow">⏸</button>
+                <div id="photoDots" class="photo-dots"></div>
+                <button id="btnNextPhoto" class="photo-nav-btn" aria-label="Next Photo" title="Next Photo">❯</button>
+            </div>
+            <button id="btnSkipToLetter" class="skip-letter-btn">
+                <span class="btn-shimmer"></span>
+                <span class="btn-content">Padho Meri Chitthi 💌</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Royal Love Letter Stage -->
+    <div id="royalLetterStage" class="letter-stage hidden">
+        <div class="letter-stage-backdrop"></div>
+        
+        <!-- Wax Envelope Teaser (Initial reveal) -->
+        <div id="waxEnvelope" class="wax-envelope">
+            <div class="envelope-glow"></div>
+            <div class="envelope-body">
+                <div class="envelope-top-flap"></div>
+                <div class="wax-seal" id="waxSeal">
+                    <span class="seal-icon">❤️</span>
+                    <span class="seal-ring"></span>
+                </div>
+                <div class="envelope-front">
+                    <p class="envelope-to">For My Queen 👑</p>
+                    <p class="envelope-sub">A royal comforting love letter just for you..</p>
+                    <div class="envelope-tap-hint">✨ Tap to open my letter ✨</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Unfolded Royal Parchment Letter -->
+        <div id="royalLetterCard" class="royal-letter-card hidden">
+            <div class="letter-filigree-border">
+                <div class="letter-inner-parchment" id="letterParchment">
+                    <!-- Quick Typewriter Tools -->
+                    <div class="letter-quick-tools">
+                        <button id="btnSkipWriting" class="letter-tool-btn" title="Skip typing & read entire letter instantly">
+                            <span>Read All ⚡</span>
+                        </button>
+                        <button id="btnRewindLetter" class="letter-tool-btn hidden" title="Watch the letter write itself again">
+                            <span>✍️ Re-write</span>
+                        </button>
+                    </div>
+
+                    <div class="letter-header">
+                        <span class="crown-icon">👑</span>
+                        <h2 class="letter-heading">Meri Jaan Tanvi.. ❤️</h2>
+                        <div class="royal-divider">
+                            <span class="divider-line"></span>
+                            <span class="divider-gem">✨</span>
+                            <span class="divider-line"></span>
+                        </div>
+                    </div>
+
+                    <!-- Dynamic Self-Writing Content Target -->
+                    <div id="letterTypewriterTarget" class="letter-body-content">
+                        <!-- Paragraphs and typewriter quill cursor injected dynamically -->
+                    </div>
+
+                    <div id="letterSignatureBlock" class="letter-sign hidden">
+                        <p>Hamesha sirf tera,</p>
+                        <span class="letter-signature">Yours Forever & Always ❤️✨</span>
+                    </div>
+
+                    <div class="letter-footer-actions">
+                        <button id="btnLetterReplay" class="royal-action-btn">
+                            <span>🔄 Replay Experience</span>
+                        </button>
+                        <button id="btnLetterPhotos" class="royal-action-btn">
+                            <span>📸 View Photos Again</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
