@@ -1499,19 +1499,19 @@ const LETTER_PARAS = [
         className: "letter-para intro"
     },
     {
-        text: "I wish more than anything that I could be right there beside you right now — to wrap you up tight in my arms, keep a warm heating bag on your tummy, gently massage your head until you fall asleep, and pamper you with all your favorite chocolates. 🍫☕",
+        text: "I wish more than anything that I could be right there beside you right now... to wrap you up tight in my arms, keep a warm heating bag on your tummy, gently massage your head until you fall asleep, and pamper you with all your favorite chocolates. 🍫☕",
         className: "letter-para"
     },
     {
-        text: "You are the strongest, sweetest, and most precious girl in my whole universe. Seeing you in even a little bit of pain aches my heart so much...",
+        text: "You are the strongest, sweetest, and most precious girl in my whole universe tanvi. Seeing you in even a little bit of pain aches my heart so much🥺... SHOTTII!!",
         className: "letter-para highlight"
     },
     {
-        text: "Please meri jaan, don't stress or push yourself today. Curl up under your softest blanket, drink plenty of warm water, and just rest. It's completely okay to feel moody, tired, or quiet — your boy is right here for you, always loving you and always by your side.",
+        text: "Please meri jaan, don't stress or push yourself today. wo to obv you won't (saali aalsi aurat) Curl up under your softest blanket, drink plenty of warm water, and just rest. It's completely okay to feel moody, tired, or quiet... your boy, your servant is right here for you my queen... always loving you and always by your side.",
         className: "letter-para"
     },
     {
-        text: "Tere bina meri duniya adhoori hai. Chahe jo bhi ho jaye, I will always take care of you, cherish you, and love you more and more each day. You are my queen, today and forever. 👑❤️",
+        text: "Tere bina mera din adhoori hai jaan. Chahe jo bhi ho jaye, I will always take care of you, cherish you, and love you more and more each day. You are my queen, today and forever. 👑❤️",
         className: "letter-para emotional"
     }
 ];
