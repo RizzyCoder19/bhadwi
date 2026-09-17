@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>meri laudi | I Love You ✨</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Great+Vibes&family=Montserrat:wght@700;900&family=Outfit:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Background Canvas -->
+    <canvas id="particleCanvas"></canvas>
+
+    <!-- Floating Top Romantic Action Bar -->
+    <div id="topControls" class="top-controls">
+        <button id="btnMusic" class="control-btn" title="Toggle Music (M)" aria-label="Toggle Music">
+            <span class="icon">🎵</span>
+        </button>
+        <button id="btnRestart" class="control-btn" title="Replay Experience (R)" aria-label="Restart">
+            <span class="icon">🔄</span>
+        </button>
+        <button id="btnFullscreen" class="control-btn" title="Fullscreen (F)" aria-label="Fullscreen">
+            <span class="icon">⛶</span>
+        </button>
+    </div>
+
+    <!-- Romantic Quote Ribbon -->
+    <div id="romanticQuote" class="romantic-quote-ribbon hidden">
+        <span class="quote-sparkle">✨</span>
+        <p id="quoteText" class="quote-text">Tere naal har pal mennu jaadu sa lagda..</p>
+        <span class="quote-sparkle">✨</span>
+    </div>
+
+    <!-- Interactive Tap Prompt at Bottom -->
+    <div id="tapHint" class="tap-hint">
+        <span>✨ ise daba ya kahi bhi ghuma aur fir dekhh.. ✨</span>
+    </div>
+
+    <!-- Minimalist Pure Cinematic Start Screen -->
+    <div id="startOverlay" class="overlay">
+        <div class="start-prompt">
+            <div class="heart-pulse-icon">❤️</div>
+            <h1 class="overlay-title">For You</h1>
+            <div class="glow-pill">
+                <span>Touch anywhere to begin chhakki! ✨</span>
+            </div>
+            <p class="audio-hint">Turn up your volume for the best experience 🎧</p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
